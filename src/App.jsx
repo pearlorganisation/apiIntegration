@@ -1,23 +1,28 @@
 import "./App.css";
 import axios from 'axios';
 import Form from "./components/Form";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import Report from "./components/Report";
 
 
 function App() {
 
-  // async function fetchData() {
-  //    try {
-  //   const response = await axios.get('https://opend.data.go.th/govspending/egpwinner?api-key=ffSlZXkHL6pxgZbJ6QmmsOepYerhY8eA&winner=Italian-Thai&offset=0&limit=20');
-  //   console.log(response.data);
-  // } catch (error) {
-  //   console.error('Error fetching data:', error);
-  // }
-  // }
-  // fetchData();
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Form />
+    },
+    {
+      path: "/report",
+      element: <Report /> 
+    }
+  ])
+
 
   return (
     <>
-    <Form/>
+    <RouterProvider router={router} /> 
+    
     </>
   );
 }
