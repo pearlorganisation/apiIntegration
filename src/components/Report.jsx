@@ -1,19 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
 
 const Report = () => {
   const [data, setData] = useState();
+  const [winningData, setWinningData] = useState();
   const { state } = useLocation();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setData(state.data);
   }, [state]);
 
+  useLayoutEffect(() => {
+    axios.get(`https://dataapi.moc.go.th/juristic?juristic_id=${data?.contract[0]?.winner_tin}`).then(res => {
+      setWinningData(res.data)
+      console.log(res.data)
+    }).catch(err => {
+      console.error(err)
+    })
+
+  }, [data])
+
   return (
-    <div className="w-full flex justify-center gap-4">
+    <div className="w-full flex flex-wrap justify-center gap-4">
       
       {/* project data */}
-      <div className="w-[45%]">
+      <div className="sm:w-[45%] w-full">
         <div className="text-2xl font-semibold text-center my-5">
           Project Data
         </div>
@@ -105,7 +117,7 @@ const Report = () => {
       </div>
 
       {/* winning company data */}
-      <div className="w-[45%]">
+      <div className="sm:w-[45%] w-full">
         <div className="text-2xl font-semibold text-center my-5">
           Winning Company Data
         </div>
@@ -124,35 +136,35 @@ const Report = () => {
             <tbody>
               <tr className="odd:bg-white  even:bg-gray-50  border-b ">
                 <td className="px-6 py-4 font-bold">Juristic ID</td>
-                <td className="px-6 py-4">{data?.project_name}</td>
+                <td className="px-6 py-4">{winningData?.juristicID}</td>
               </tr>
               <tr className="odd:bg-white  even:bg-gray-50  border-b ">
                 <td className="px-6 py-4 font-bold">Department Name</td>
-                <td className="px-6 py-4">{data?.project_id}</td>
+                <td className="px-6 py-4">{winningData?.juristicNameTH}</td>
               </tr>
               <tr className="odd:bg-white  even:bg-gray-50  border-b ">
                 <td className="px-6 py-4 font-bold">Juristic status</td>
-                <td className="px-6 py-4">{data?.dept_name}</td>
+                <td className="px-6 py-4">{winningData?.juristicStatus}</td>
               </tr>
               <tr className="odd:bg-white  even:bg-gray-50  border-b ">
                 <td className="px-6 py-4 font-bold">Registered capital</td>
-                <td className="px-6 py-4">{data?.contract[0]?.winner}</td>
+                <td className="px-6 py-4">{winningData?.registerCapital}</td>
               </tr>
               <tr className="odd:bg-white  even:bg-gray-50  border-b ">
                 <td className="px-6 py-4 font-bold">Registered Date</td>
-                <td className="px-6 py-4">{data?.contract[0]?.winner}</td>
+                <td className="px-6 py-4">{winningData?.registerDate}</td>
               </tr>
               <tr className="odd:bg-white  even:bg-gray-50  border-b ">
                 <td className="px-6 py-4 font-bold">Address</td>
-                <td className="px-6 py-4">{data?.dept_sub_name}</td>
+                <td className="px-6 py-4">{winningData?.addressDetail?.addressName}</td>
               </tr>
               <tr className="odd:bg-white  even:bg-gray-50  border-b ">
                 <td className="px-6 py-4 font-bold">Total Projects won</td>
-                <td className="px-6 py-4">{data?.province}</td>
+                <td className="px-6 py-4">{winningData?.province}</td>
               </tr>
               <tr className="odd:bg-white  even:bg-gray-50  border-b ">
                 <td className="px-6 py-4 font-bold">Total Potential earnings</td>
-                <td className="px-6 py-4">{data?.project_type_name}</td>
+                <td className="px-6 py-4">{winningData?.project_type_name}</td>
               </tr>
             </tbody>
           </table>
