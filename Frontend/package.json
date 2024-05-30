@@ -15,7 +15,10 @@
     "react-datepicker": "^6.9.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.5",
-    "react-router-dom": "^6.23.1"
+    "react-loading-skeleton": "^3.4.0",
+    "react-router-dom": "^6.23.1",
+    "react-select": "^5.8.0",
+    "react-spinner": "^0.2.7"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
