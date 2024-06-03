@@ -1,19 +1,30 @@
+import dotenv from 'dotenv'
+dotenv.config();
+
+import cors from 'cors'
+
 import express from "express";
+import projectsRouter from "./routes/projects.js";
 
 const app = express();
 const PORT = 3000;
 
-const getData = async () => {
-  const url =
-    "https://opend.data.go.th/govspending/cgdcontract?api-key=29gUWaSV8volk31RZpuBYJtqAqws1X1p&year=2560";
+app.use(express.json());
 
-  const options = {
-    method: "GET",
-  };
-  const response = await fetch(url, options);
-  const data = await response.json(); // Convert response body to JSON
-  return data; // Return the JSON data
-};
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://api-integration-1.vercel.app",
+    ],
+    // credentials: true,
+    methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
+    exposedHeaders: ["*", "Authorization"],
+  })
+);
+
+app.use("/api/v1/projects", projectsRouter);
 
 app.get("/", async (req, res) => {
   try {
