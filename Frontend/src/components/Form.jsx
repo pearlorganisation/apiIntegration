@@ -38,11 +38,11 @@ const Form = () => {
   };
 
   useEffect(() => {
-    axios
-      .get("https://restcountries.com/v3.1/independent?status=true")
-      .then((res) => {
-        setCountries(res.data);
-      });
+    // axios
+    //   .get("https://restcountries.com/v3.1/independent?status=true")
+    //   .then((res) => {
+    //     setCountries(res.data);
+    //   });
     populateYears();
     // resultTableRef.current.scrollIntoView({ behavior: "smooth" });
   }, [apiData]);
@@ -81,29 +81,17 @@ const Form = () => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
                 {...register("country", { required: false })}
               >
-                {countries &&
-                  countries.map((item) => {
-                    if (item?.name?.common === "Thailand") {
-                      return (
+                
+                     
                         <option
-                          key={item?.name?.common}
-                          value={item?.name?.common}
+                          key={"Thailand"}
+                          value={"Thailand"}
                           selected
                         >
-                          {item?.name?.common}
+                          {"Thailand"}
                         </option>
-                      );
-                    } else {
-                      return (
-                        <option
-                          key={item?.name?.common}
-                          value={item?.name?.common}
-                        >
-                          {item?.name?.common}
-                        </option>
-                      );
-                    }
-                  })}
+                      
+                    
               </select>
             </div>
 
