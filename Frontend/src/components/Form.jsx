@@ -12,11 +12,9 @@ const Form = () => {
   const [years, setYears] = useState([]);
   const [apiUrl, setApiUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
   // refs
-
   const resultTableRef = useRef(null);
-
+  const [formData, setFormData] = useState(null);
   const {
     control,
     register,
@@ -38,17 +36,11 @@ const Form = () => {
   };
 
   useEffect(() => {
-    // axios
-    //   .get("https://restcountries.com/v3.1/independent?status=true")
-    //   .then((res) => {
-    //     setCountries(res.data);
-    //   });
     populateYears();
-    // resultTableRef.current.scrollIntoView({ behavior: "smooth" });
   }, [apiData]);
 
   const onSubmit = (data) => {
-    console.log(data);
+    setFormData(data);
     setIsLoading(true);
     axios
       .post(`${import.meta.env.VITE_API_URL}/projects/find`, data)
@@ -81,17 +73,9 @@ const Form = () => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
                 {...register("country", { required: false })}
               >
-                
-                     
-                        <option
-                          key={"Thailand"}
-                          value={"Thailand"}
-                          selected
-                        >
-                          {"Thailand"}
-                        </option>
-                      
-                    
+                <option key={"Thailand"} value={"Thailand"} selected>
+                  {"Thailand"}
+                </option>
               </select>
             </div>
 
@@ -362,87 +346,89 @@ const Form = () => {
           </div>
         </form>
       </div>
-      <div className="text-2xl text-center font-semibold">Result:</div>
-      {apiData ? (
-        <div
-          className="relative overflow-x-auto sm:rounded-lg shadow-[0_0_1px_0px#000] mb-10"
-          ref={resultTableRef}
-        >
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500  ">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50  ">
-              <tr>
-                <th scope="col" className="px-6 py-3">
-                  S.No
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Project
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Department
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Winning Company
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Location
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3"
-                  style={{ width: "200px" }}
-                >
-                  Reference Price
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3"
-                  style={{ width: "200px" }}
-                >
-                  Winning Bid
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3"
-                  style={{ width: "150px" }}
-                >
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {apiData &&
-                apiData.map((item, idx) => (
-                  <tr
-                    key={`apiData${idx}`}
-                    className="odd:bg-white  even:bg-gray-50  border-b "
-                  >
-                    <th
-                      scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap "
-                    >
-                      {idx + 1}
-                    </th>
-                    <td className="px-6 py-4 text-blue-500 hover:text-blue-700 hover:underline transition duration-300">
-                      <Link to="/report" state={{ data: item }}>
-                        {item?.project_name}
-                      </Link>
-                    </td>
-                    <td className="px-6 py-4">{item?.dept_name}</td>
-                    <td className="px-6 py-4">{item?.contract[0]?.winner}</td>
-                    <td className="px-6 py-4">{item?.province}</td>
-                    <td className="px-6 py-4">&#3647; {item?.price_build}</td>
-                    <td className="px-6 py-4">
-                      &#3647; {item?.contract[0]?.price_agree}
-                    </td>
-                    <td className="px-6 py-4">{item?.contract[0]?.status}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
+      {isLoading && <Skeleton count={10} className="h-[40px]" />}
+      {apiData && (
         <>
-          <Skeleton count={10} className="h-[40px]" />
+          <div className="text-2xl text-center font-semibold">Result:</div>
+          <div
+            className="relative overflow-x-auto sm:rounded-lg shadow-[0_0_1px_0px#000] mb-10"
+            ref={resultTableRef}
+          >
+            <table className="w-full text-sm text-left rtl:text-right text-gray-500  ">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50  ">
+                <tr>
+                  <th scope="col" className="px-6 py-3">
+                    S.No
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Project
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Department
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Winning Company
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Location
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3"
+                    style={{ width: "200px" }}
+                  >
+                    Reference Price
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3"
+                    style={{ width: "200px" }}
+                  >
+                    Winning Bid
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3"
+                    style={{ width: "150px" }}
+                  >
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {apiData &&
+                  apiData.map((item, idx) => (
+                    <tr
+                      key={`apiData${idx}`}
+                      className="odd:bg-white  even:bg-gray-50  border-b "
+                    >
+                      <th
+                        scope="row"
+                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap "
+                      >
+                        {idx + 1}
+                      </th>
+                      <td className="px-6 py-4 text-blue-500 hover:text-blue-700 hover:underline transition duration-300">
+                        <Link
+                          to="/report"
+                          state={{ data: item, formData: formData }}
+                        >
+                          {item?.project_name}
+                        </Link>
+                      </td>
+                      <td className="px-6 py-4">{item?.dept_name}</td>
+                      <td className="px-6 py-4">{item?.contract[0]?.winner}</td>
+                      <td className="px-6 py-4">{item?.province}</td>
+                      <td className="px-6 py-4">&#3647; {item?.price_build}</td>
+                      <td className="px-6 py-4">
+                        &#3647; {item?.contract[0]?.price_agree}
+                      </td>
+                      <td className="px-6 py-4">{item?.contract[0]?.status}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>
