@@ -7,7 +7,7 @@ import { BeatLoader } from "react-spinner";
 import Skeleton from "react-loading-skeleton";
 
 const Form = () => {
-  const [apiData, setApiData] = useState(null);
+  const [apiData, setApiData] = useState(JSON.parse(localStorage.getItem('apiData')));
   const [countries, setCountries] = useState(null);
   const [years, setYears] = useState([]);
   const [apiUrl, setApiUrl] = useState(null);
@@ -17,6 +17,7 @@ const Form = () => {
   const [formData, setFormData] = useState(null);
   const {
     control,
+    reset,
     register,
     handleSubmit,
     formState: { errors },
@@ -37,16 +38,20 @@ const Form = () => {
 
   useEffect(() => {
     populateYears();
-  }, [apiData]);
+    if(apiData?.data){
+      resultTableRef.current.scrollIntoView({top:0, left: 0, behaviour: 'smooth'})
+    }
+  }, []);
 
   const onSubmit = (data) => {
-    setFormData(data);
+    
     setIsLoading(true);
     axios
       .post(`${import.meta.env.VITE_API_URL}/projects/find`, data)
       .then((res) => {
-        console.log(res);
-        setApiData(res.data.result);
+        let resData = {data: res.data.result, formData: data}
+        setApiData(resData);
+        localStorage.setItem('data', JSON.stringify(resData))
         setIsLoading(false);
       })
       .catch((err) => {
@@ -54,6 +59,9 @@ const Form = () => {
         setIsLoading(false);
       });
   };
+
+
+
 
   return (
     <div className="flex flex-col gap-10 justify-center py-10">
@@ -340,6 +348,7 @@ const Form = () => {
             <button
               type="button"
               className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center "
+              onClick={() => reset()}
             >
               Reset
             </button>
@@ -348,11 +357,10 @@ const Form = () => {
       </div>
       {isLoading && <Skeleton count={10} className="h-[40px]" />}
       {apiData && (
-        <>
+        <div ref={resultTableRef} className="flex flex-col gap-4">
           <div className="text-2xl text-center font-semibold">Result:</div>
           <div
             className="relative overflow-x-auto sm:rounded-lg shadow-[0_0_1px_0px#000] mb-10"
-            ref={resultTableRef}
           >
             <table className="w-full text-sm text-left rtl:text-right text-gray-500  ">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50  ">
@@ -396,10 +404,10 @@ const Form = () => {
                 </tr>
               </thead>
               <tbody>
-                {apiData &&
-                  apiData.map((item, idx) => (
+                {apiData?.data &&
+                  apiData?.data?.map((item, idx) => (
                     <tr
-                      key={`apiData${idx}`}
+                      key={`data${idx}`}
                       className="odd:bg-white  even:bg-gray-50  border-b "
                     >
                       <th
@@ -411,7 +419,7 @@ const Form = () => {
                       <td className="px-6 py-4 text-blue-500 hover:text-blue-700 hover:underline transition duration-300">
                         <Link
                           to="/report"
-                          state={{ data: item, formData: formData }}
+                          state={{ data: item, formData: apiData.formData }}
                         >
                           {item?.project_name}
                         </Link>
@@ -429,7 +437,7 @@ const Form = () => {
               </tbody>
             </table>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

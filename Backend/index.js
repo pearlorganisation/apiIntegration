@@ -4,7 +4,7 @@ dotenv.config();
 import cors from 'cors'
 
 import express from "express";
-import projectsRouter from "./routes/projects.js";
+import projectsRouter from "./src/routes/projects.js";
 
 const app = express();
 const PORT = 3000;
@@ -15,6 +15,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
+      "http://localhost:5174",
       "https://api-integration-1.vercel.app",
     ],
     credentials: true,

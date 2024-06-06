@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Skeleton from "react-loading-skeleton";
@@ -8,24 +8,43 @@ const Report = () => {
   const [data, setData] = useState();
   const [winningData, setWinningData] = useState();
   const { state } = useLocation();
-
+  const [winningDataLoading, setWinningDataLoading] = useState(true);
   useLayoutEffect(() => {
+    console.log(state)
     setData(state.data);
-  }, [state]);
-
-  useLayoutEffect(() => {
     axios
       .get(
-        `https://dataapi.moc.go.th/juristic?juristic_id=${data?.contract[0]?.winner_tin}`
+        `https://dataapi.moc.go.th/juristic?juristic_id=${state.data?.contract[0]?.winner_tin}`
       )
       .then((res) => {
         setWinningData(res.data);
         console.log(res.data);
+        setWinningDataLoading(false)
       })
       .catch((err) => {
         console.error(err);
+        setWinningDataLoading(false)
+
       });
-  }, [data]);
+
+
+
+      axios
+      .post(`${import.meta.env.VITE_API_URL}/projects/find`, state.formData)
+      .then((res) => {
+        console.log(res);
+        // setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        // setIsLoading(false);
+      });
+
+
+  }, [state]);
+
+
+
 
   return (
     <>
@@ -55,9 +74,7 @@ const Report = () => {
               d="M0 9.333V9a4 4 0 0 1 4-4h28a4 4 0 0 1 4 4v.333H0z"
             ></path>
           </svg>
-          <span className="flex justify-center text-3xl">
-            TH
-          </span>
+          <span className="flex justify-center text-3xl">TH</span>
         </span>
       </div>
       <div className="w-full flex flex-wrap justify-center gap-4">
@@ -152,7 +169,8 @@ const Report = () => {
           <div className="text-2xl font-semibold text-center my-5">
             Winning Company Data
           </div>
-          {winningData ? (
+          {winningDataLoading && <Skeleton count={8} className="h-[50px]" />}
+          {winningData && (
             <div className="relative overflow-x-auto sm:rounded-lg shadow-[0_0_1px_0px#000] mb-10">
               <table className="w-full text-sm text-left rtl:text-right text-gray-500  ">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50  ">
@@ -209,8 +227,11 @@ const Report = () => {
                 </tbody>
               </table>
             </div>
-          ) : (
-            <Skeleton count={8} className="h-[50px]" />
+          )}
+          {!winningData && !winningDataLoading && (
+            <div className="relative overflow-x-auto shadow-[0_0_1px_0px#000] mb-10 text-center text-2xl font-light">
+              No Data found
+            </div>
           )}
         </div>
       </div>

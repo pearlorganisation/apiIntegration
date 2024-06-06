@@ -1,6 +1,6 @@
 const findProjectsData = async (data) => {
   const url = `${process.env.API1}?api-key=${process.env.API_KEY}&year=${
-    Number(data.yearsFrom.value) + 543
+    data.year + 543
   }&keyword=${data?.keyword}&limit=${data?.limit || 30}&offset=${
     data?.offset || 0
   }&winner_tin=${data?.winnerTin || " "}`;
@@ -25,7 +25,9 @@ const findCompanyData = async (data) => {
 
 export const getData = async (req, res) => {
   try {
-    const result = await findProjectsData(req.body);
+    let data = req.body
+    data.year = Number(data.yearsFrom.value)
+    const result = await findProjectsData(data);
     res.status(200).send(result);
   } catch (error) {
     console.error(error);
@@ -35,21 +37,32 @@ export const getData = async (req, res) => {
 export const getCompanyData = async (req, res) => {
   try {
     const companyData = await findCompanyData(req.body.winnerTin);
-    console.log(companyData);
-    if (companyData) {
-      const companyProjectsData = await findProjectsData(req.body);
-      console.log(companyProjectsData);
+    res.status(200).json({
+      status: true,
+      companyData: companyData,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: false, message: err });
+  }
+};
 
-      if (companyProjectsData) {
-        res.status(200).json({
-          status: true,
-          companyData: companyData,
-          companyProjectsData: companyProjectsData,
-        });
-      } else {
-        res.status(500).json({ status: false, message: "data not found" });
-      }
+export const getCompanyProjectsData = async (req, res) => {
+  try {
+    const companyProjectsData = []
+    let i = Number(req.body.yearsFrom.value)
+    let floorYear = i - 5
+    // getting last 5 year data
+    for(i;i >= floorYear; i--){
+      let data = req.body
+      data.year = i
+      let result = await findProjectsData(data)
+      companyProjectsData.push(result)
     }
+    res.status(200).json({
+      status: true,
+      companyProjectsData: companyProjectsData,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ status: false, message: err });
