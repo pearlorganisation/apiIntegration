@@ -7,7 +7,9 @@ import { BeatLoader } from "react-spinner";
 import Skeleton from "react-loading-skeleton";
 
 const Form = () => {
-  const [apiData, setApiData] = useState(JSON.parse(localStorage.getItem('apiData')));
+  const [apiData, setApiData] = useState(
+    JSON.parse(localStorage.getItem("apiData"))
+  );
   const [countries, setCountries] = useState(null);
   const [years, setYears] = useState([]);
   const [apiUrl, setApiUrl] = useState(null);
@@ -38,20 +40,23 @@ const Form = () => {
 
   useEffect(() => {
     populateYears();
-    if(apiData?.data){
-      resultTableRef.current.scrollIntoView({top:0, left: 0, behaviour: 'smooth'})
+    if (apiData?.data) {
+      resultTableRef.current.scrollIntoView({
+        top: 0,
+        left: 0,
+        behaviour: "smooth",
+      });
     }
   }, []);
 
   const onSubmit = (data) => {
-    
     setIsLoading(true);
     axios
       .post(`${import.meta.env.VITE_API_URL}/projects/find`, data)
       .then((res) => {
-        let resData = {data: res.data.result, formData: data}
+        let resData = { data: res.data.result, formData: data };
         setApiData(resData);
-        localStorage.setItem('data', JSON.stringify(resData))
+        localStorage.setItem("data", JSON.stringify(resData));
         setIsLoading(false);
       })
       .catch((err) => {
@@ -60,8 +65,16 @@ const Form = () => {
       });
   };
 
-
-
+  useEffect(async () => {
+    const data = {
+      q: "Hello!",
+      source: "en",
+      target: "es",
+    }
+    axios.post("https://libretranslate.com/translate", data).then((res) => {
+      console.log(res);
+    });
+  }, []);
 
   return (
     <div className="flex flex-col gap-10 justify-center py-10">
@@ -359,9 +372,7 @@ const Form = () => {
       {apiData && (
         <div ref={resultTableRef} className="flex flex-col gap-4">
           <div className="text-2xl text-center font-semibold">Result:</div>
-          <div
-            className="relative overflow-x-auto sm:rounded-lg shadow-[0_0_1px_0px#000] mb-10"
-          >
+          <div className="relative overflow-x-auto sm:rounded-lg shadow-[0_0_1px_0px#000] mb-10">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500  ">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50  ">
                 <tr>
