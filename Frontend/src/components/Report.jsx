@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import BarChart from "./BarChart";
 
 const Report = () => {
   const [data, setData] = useState();
@@ -27,8 +28,6 @@ const Report = () => {
 
       });
 
-
-
       axios
       .post(`${import.meta.env.VITE_API_URL}/projects/find`, state.formData)
       .then((res) => {
@@ -42,6 +41,30 @@ const Report = () => {
 
 
   }, [state]);
+
+
+
+  const chartData = {
+    labels: ["Chocolate", "Vanilla", "Strawberry"],
+    datasets: [
+      {
+        label: "Blue",
+        backgroundColor: "blue",
+        data: [3, 7, 4]
+      },
+      {
+        label: "Red",
+        backgroundColor: "red",
+        data: [4, 3, 5]
+      },
+      {
+        label: "Green",
+        backgroundColor: "green",
+        data: [7, 2, 6]
+      }
+    ]
+  };
+
 
 
 
@@ -86,7 +109,7 @@ const Report = () => {
 
           <div className="relative overflow-x-auto sm:rounded-lg shadow-[0_0_1px_0px#000] mb-10">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500  ">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50  ">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                 <tr>
                   <th scope="col" className="px-6 py-3">
                     Title
@@ -233,6 +256,14 @@ const Report = () => {
               No Data found
             </div>
           )}
+
+          {/* chart */}
+          <div>
+            <BarChart data={chartData} />
+          </div>
+
+
+
         </div>
       </div>
     </>
