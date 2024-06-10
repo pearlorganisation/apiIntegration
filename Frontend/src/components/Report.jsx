@@ -10,6 +10,7 @@ const Report = () => {
   const [winningData, setWinningData] = useState();
   const { state } = useLocation();
   const [winningDataLoading, setWinningDataLoading] = useState(true);
+ 
   useLayoutEffect(() => {
     console.log(state)
     setData(state.data);
@@ -28,10 +29,12 @@ const Report = () => {
 
       });
 
+      console.log(state.formData)
+
       axios
       .post(`${import.meta.env.VITE_API_URL}/projects/find`, state.formData)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         // setIsLoading(false);
       })
       .catch((err) => {

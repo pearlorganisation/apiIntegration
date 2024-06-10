@@ -7,9 +7,7 @@ import { BeatLoader } from "react-spinner";
 import Skeleton from "react-loading-skeleton";
 
 const Form = () => {
-  const [apiData, setApiData] = useState(
-    JSON.parse(localStorage.getItem("apiData"))
-  );
+  const [apiData, setApiData] = useState(JSON.parse(localStorage.getItem("apiData")));
   const [countries, setCountries] = useState(null);
   const [years, setYears] = useState([]);
   const [apiUrl, setApiUrl] = useState(null);
@@ -17,6 +15,7 @@ const Form = () => {
   // refs
   const resultTableRef = useRef(null);
   const [formData, setFormData] = useState(null);
+
   const {
     control,
     reset,
@@ -39,6 +38,7 @@ const Form = () => {
   };
 
   useEffect(() => {
+
     populateYears();
     if (apiData?.data) {
       resultTableRef.current.scrollIntoView({
@@ -56,7 +56,7 @@ const Form = () => {
       .then((res) => {
         let resData = { data: res.data.result, formData: data };
         setApiData(resData);
-        localStorage.setItem("data", JSON.stringify(resData));
+        localStorage.setItem("apiData", JSON.stringify(resData));
         setIsLoading(false);
       })
       .catch((err) => {
@@ -64,17 +64,6 @@ const Form = () => {
         setIsLoading(false);
       });
   };
-
-  useEffect(async () => {
-    const data = {
-      q: "Hello!",
-      source: "en",
-      target: "es",
-    }
-    axios.post("https://libretranslate.com/translate", data).then((res) => {
-      console.log(res);
-    });
-  }, []);
 
   return (
     <div className="flex flex-col gap-10 justify-center py-10">
@@ -164,20 +153,19 @@ const Form = () => {
               >
                 To
               </label>
-              <select
-                id="yearTo"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
-                {...register("yearTo", { required: false })}
-              >
-                {years &&
-                  years.map((item) => {
-                    return (
-                      <option key={item} value={item}>
-                        {item}
-                      </option>
-                    );
-                  })}
-              </select>
+              <Controller
+                name="yearsTo"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={years.map((year) => ({
+                      value: year,
+                      label: year,
+                    }))}
+                  />
+                )}
+              />
             </div>
           </div>
 
@@ -361,7 +349,11 @@ const Form = () => {
             <button
               type="button"
               className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center "
-              onClick={() => reset()}
+              onClick={() => {
+                reset()
+                localStorage.removeItem('apiData')
+                setApiData(null)
+              }}
             >
               Reset
             </button>

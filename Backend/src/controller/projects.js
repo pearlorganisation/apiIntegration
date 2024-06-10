@@ -26,6 +26,7 @@ const findCompanyData = async (data) => {
 export const getData = async (req, res) => {
   try {
     let data = req.body
+    console.log(data)
     data.year = Number(data.yearsFrom.value)
     const result = await findProjectsData(data);
     res.status(200).send(result);
@@ -53,10 +54,12 @@ export const getCompanyProjectsData = async (req, res) => {
     let i = Number(req.body.yearsFrom.value)
     let floorYear = i - 5
     // getting last 5 year data
+    let totalProjects = 0
     for(i;i >= floorYear; i--){
       let data = req.body
       data.year = i
       let result = await findProjectsData(data)
+      console.log(result)
       companyProjectsData.push(result)
     }
     res.status(200).json({
