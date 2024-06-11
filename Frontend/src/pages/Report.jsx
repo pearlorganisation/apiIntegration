@@ -3,16 +3,15 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import BarChart from "./BarChart";
+import BarChart from "../components/BarChart";
+import CompanyInfo from "../components/CompanyInfo";
 
 const Report = () => {
   const [data, setData] = useState();
-  const [winningData, setWinningData] = useState();
   const { state } = useLocation();
-  const [winningDataLoading, setWinningDataLoading] = useState(true);
- 
+  
+
   useLayoutEffect(() => {
-    console.log(state)
     setData(state.data);
     axios
       .get(
@@ -21,31 +20,19 @@ const Report = () => {
       .then((res) => {
         setWinningData(res.data);
         console.log(res.data);
-        setWinningDataLoading(false)
+        setWinningDataLoading(false);
       })
       .catch((err) => {
         console.error(err);
-        setWinningDataLoading(false)
-
+        setWinningDataLoading(false);
       });
 
-      console.log(state.formData)
-
-      axios
-      .post(`${import.meta.env.VITE_API_URL}/projects/find`, state.formData)
-      .then((res) => {
-        // console.log(res);
-        // setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        // setIsLoading(false);
-      });
-
-
+    
   }, [state]);
 
-
+  useEffect(() => {
+    window.scrollTo({top:0, left:0, behavior: 'smooth'})
+  }, [])
 
   const chartData = {
     labels: ["Chocolate", "Vanilla", "Strawberry"],
@@ -53,24 +40,20 @@ const Report = () => {
       {
         label: "Blue",
         backgroundColor: "blue",
-        data: [3, 7, 4]
+        data: [3, 7, 4],
       },
       {
         label: "Red",
         backgroundColor: "red",
-        data: [4, 3, 5]
+        data: [4, 3, 5],
       },
       {
         label: "Green",
         backgroundColor: "green",
-        data: [7, 2, 6]
-      }
-    ]
+        data: [7, 2, 6],
+      },
+    ],
   };
-
-
-
-
 
   return (
     <>
@@ -192,81 +175,13 @@ const Report = () => {
 
         {/* winning company data */}
         <div className="sm:w-[45%] w-full">
-          <div className="text-2xl font-semibold text-center my-5">
-            Winning Company Data
-          </div>
-          {winningDataLoading && <Skeleton count={8} className="h-[50px]" />}
-          {winningData && (
-            <div className="relative overflow-x-auto sm:rounded-lg shadow-[0_0_1px_0px#000] mb-10">
-              <table className="w-full text-sm text-left rtl:text-right text-gray-500  ">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50  ">
-                  <tr>
-                    <th scope="col" className="px-6 py-3">
-                      Title
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Value
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="odd:bg-white  even:bg-gray-50  border-b ">
-                    <td className="px-6 py-4 font-bold">Juristic ID</td>
-                    <td className="px-6 py-4">{winningData?.juristicID}</td>
-                  </tr>
-                  <tr className="odd:bg-white  even:bg-gray-50  border-b ">
-                    <td className="px-6 py-4 font-bold">Department Name</td>
-                    <td className="px-6 py-4">{winningData?.juristicNameTH}</td>
-                  </tr>
-                  <tr className="odd:bg-white  even:bg-gray-50  border-b ">
-                    <td className="px-6 py-4 font-bold">Juristic status</td>
-                    <td className="px-6 py-4">{winningData?.juristicStatus}</td>
-                  </tr>
-                  <tr className="odd:bg-white  even:bg-gray-50  border-b ">
-                    <td className="px-6 py-4 font-bold">Registered capital</td>
-                    <td className="px-6 py-4">
-                      {winningData?.registerCapital}
-                    </td>
-                  </tr>
-                  <tr className="odd:bg-white  even:bg-gray-50  border-b ">
-                    <td className="px-6 py-4 font-bold">Registered Date</td>
-                    <td className="px-6 py-4">{winningData?.registerDate}</td>
-                  </tr>
-                  <tr className="odd:bg-white  even:bg-gray-50  border-b ">
-                    <td className="px-6 py-4 font-bold">Address</td>
-                    <td className="px-6 py-4">
-                      {winningData?.addressDetail?.addressName}
-                    </td>
-                  </tr>
-                  <tr className="odd:bg-white  even:bg-gray-50  border-b ">
-                    <td className="px-6 py-4 font-bold">Total Projects won</td>
-                    <td className="px-6 py-4">{winningData?.province}</td>
-                  </tr>
-                  <tr className="odd:bg-white  even:bg-gray-50  border-b ">
-                    <td className="px-6 py-4 font-bold">
-                      Total Potential earnings
-                    </td>
-                    <td className="px-6 py-4">
-                      {winningData?.project_type_name}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          )}
-          {!winningData && !winningDataLoading && (
-            <div className="relative overflow-x-auto shadow-[0_0_1px_0px#000] mb-10 text-center text-2xl font-light">
-              No Data found
-            </div>
-          )}
+          
+          <CompanyInfo formData={state.formData} winnerTin={state.data?.contract[0]?.winner_tin} />
 
           {/* chart */}
           <div>
             <BarChart data={chartData} />
           </div>
-
-
-
         </div>
       </div>
     </>

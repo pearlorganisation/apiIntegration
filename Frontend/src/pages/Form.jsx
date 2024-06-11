@@ -7,7 +7,9 @@ import { BeatLoader } from "react-spinner";
 import Skeleton from "react-loading-skeleton";
 
 const Form = () => {
-  const [apiData, setApiData] = useState(JSON.parse(localStorage.getItem("apiData")));
+  const [apiData, setApiData] = useState(
+    JSON.parse(localStorage.getItem("apiData"))
+  );
   const [countries, setCountries] = useState(null);
   const [years, setYears] = useState([]);
   const [apiUrl, setApiUrl] = useState(null);
@@ -38,7 +40,9 @@ const Form = () => {
   };
 
   useEffect(() => {
-
+    if (localStorage.getItem("apiData")) {
+      localStorage.clear();
+    }
     populateYears();
     if (apiData?.data) {
       resultTableRef.current.scrollIntoView({
@@ -69,7 +73,7 @@ const Form = () => {
     <div className="flex flex-col gap-10 justify-center py-10">
       <div className="flex flex-col justify-center  items-center gap-4">
         <div className="text-2xl font-semibold">Data Request Form:</div>
-        <form className="w-[800px]" onSubmit={handleSubmit(onSubmit)}>
+        <form className="w-full px-10 md:px-0 md:w-[800px]" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-2 gap-2">
             <div className="mb-1">
               <label
@@ -246,15 +250,15 @@ const Form = () => {
           <div className="grid grid-cols-2 gap-2">
             <div className="mb-1">
               <label
-                htmlFor="yearFrom"
+                htmlFor="announceDateFrom"
                 className="block mb-1 text-sm font-medium text-gray-90"
               >
                 Announce Date From
               </label>
               <select
-                id="yearFrom"
+                id="announceDateFrom"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
-                {...register("yearFrom", { required: false })}
+                {...register("announceDateFrom", { required: false })}
               >
                 {years &&
                   years.map((item) => {
@@ -269,15 +273,15 @@ const Form = () => {
 
             <div className="mb-1">
               <label
-                htmlFor="yearTo"
+                htmlFor="announceDateTo"
                 className="block mb-1 text-sm font-medium text-gray-90"
               >
                 Till
               </label>
               <select
-                id="yearTo"
+                id="announceDateTo"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
-                {...register("yearTo", { required: false })}
+                {...register("announceDateTo", { required: false })}
               >
                 {years &&
                   years.map((item) => {
@@ -294,47 +298,47 @@ const Form = () => {
           <div className="grid grid-cols-2 gap-2">
             <div className="mb-1">
               <label
-                htmlFor="projectType"
+                htmlFor="referencePriceFrom"
                 className="block mb-1 text-sm font-medium text-gray-90"
               >
                 Reference Price From
               </label>
               <input
                 type="text"
-                id="projectType"
+                id="referencePriceFrom"
                 placeholder="Price From"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
-                {...register("projectType", { required: false })}
+                {...register("referencePriceFrom", { required: false })}
               />
             </div>
 
             <div className="mb-1">
               <label
-                htmlFor="projectType"
+                htmlFor="referencePriceTo"
                 className="block mb-1 text-sm font-medium text-gray-90"
               >
                 Till
               </label>
               <input
                 type="text"
-                id="projectType"
+                id="referencePriceTo"
                 placeholder="Price Till"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
-                {...register("projectType", { required: false })}
+                {...register("referencePriceTo", { required: false })}
               />
             </div>
           </div>
           <div className="mb-1">
             <label
-              htmlFor="purchaseMethod"
+              htmlFor="projectStatus"
               className="block mb-1 text-sm font-medium text-gray-90"
             >
               Project Status
             </label>
             <select
-              id="purchaseMethod"
+              id="projectStatus"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
-              {...register("purchaseMethod", { required: false })}
+              {...register("projectStatus", { required: false })}
             ></select>
           </div>
 
@@ -342,6 +346,7 @@ const Form = () => {
             <button
               type="submit"
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+              onClick={() => setApiData(null)}
             >
               {isLoading ? "Loading..." : "Submit"}
             </button>
@@ -350,9 +355,9 @@ const Form = () => {
               type="button"
               className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center "
               onClick={() => {
-                reset()
-                localStorage.removeItem('apiData')
-                setApiData(null)
+                reset();
+                localStorage.removeItem("apiData");
+                setApiData(null);
               }}
             >
               Reset
@@ -364,6 +369,47 @@ const Form = () => {
       {apiData && (
         <div ref={resultTableRef} className="flex flex-col gap-4">
           <div className="text-2xl text-center font-semibold">Result:</div>
+          {/* filters */}
+          <div class="flex">
+            {/* left side */}
+            <div className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-s-lg  border border-gray-300 focus:ring-blue-500 focus:border-blue-500  dark:text-white"></div>
+
+            {/* mid */}
+            <div className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50  border border-gray-300 border-s-0 border-e-0 focus:ring-blue-500 focus:border-blue-500  dark:text-white"></div>
+            
+            {/* right */}
+            <div class="relative w-full">
+              <input
+                type="search"
+                id="search-dropdown"
+                class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-1 border border-gray-300 focus:ring-blue-500 focus:border-blue-500  dark:text-white "
+                placeholder="Search Mockups, Logos, Design Templates..."
+                required
+              />
+              <button
+                type="button"
+                class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300   "
+              >
+                <svg
+                  class="w-4 h-4"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                  />
+                </svg>
+                <span class="sr-only">Search</span>
+              </button>
+            </div>
+          </div>
+
           <div className="relative overflow-x-auto sm:rounded-lg shadow-[0_0_1px_0px#000] mb-10">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500  ">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50  ">
@@ -411,7 +457,7 @@ const Form = () => {
                   apiData?.data?.map((item, idx) => (
                     <tr
                       key={`data${idx}`}
-                      className="odd:bg-white  even:bg-gray-50  border-b "
+                      className="odd:bg-indigo-100  even:bg-violet-100  border-b font-[500] hover:!text-black "
                     >
                       <th
                         scope="row"

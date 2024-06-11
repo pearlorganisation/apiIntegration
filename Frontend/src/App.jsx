@@ -1,8 +1,8 @@
 import "./App.css";
 import axios from 'axios';
-import Form from "./components/Form";
+import Form from "./pages/Form";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Report from "./components/Report";
+import Report from "./pages/Report";
 
 
 function App() {
