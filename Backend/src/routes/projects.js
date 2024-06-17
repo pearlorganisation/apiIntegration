@@ -8,3 +8,4 @@ projectsRouter.route("/companyprojects").post(getCompanyProjectsData);
 projectsRouter.route("/department").post(getDepartmentData)
 
 export default projectsRouter;
+ 

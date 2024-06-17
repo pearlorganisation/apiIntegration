@@ -69,11 +69,40 @@ const Form = () => {
       });
   };
 
+
+  const projectType = [
+    {label: 'ซื้อ', value: 'ซื้อ'},
+    {label: 'จ้างก่อสร้าง', value: 'จ้างก่อสร้าง'},
+    {label: 'จ้างทำของ/จ้างเหมาบริการ', value: 'จ้างทำของ/จ้างเหมาบริการ'},
+    {label: 'จ้างที่ปรึกษา', value: 'จ้างที่ปรึกษา'},
+    {label: 'จ้างออกแบบ', value: 'จ้างออกแบบ'},
+    {label: 'จ้างควบคุมงาน', value: 'จ้างควบคุมงาน'},
+    {label: 'จ้างออกแบบและควบคุมงานก่อสร้าง', value: 'จ้างออกแบบและควบคุมงานก่อสร้าง'},
+  ]
+
+  const purchaseMethod = [
+    {label: 'ตลาดอิเล็กทรอนิกส์ (e-market)', value: 'ตลาดอิเล็กทรอนิกส์ (e-market)'},
+    {label: 'ประกวดราคาอิเล็กทรอนิกส์ (e-bidding)', value: 'ประกวดราคาอิเล็กทรอนิกส์ (e-bidding)'},
+    {label: 'คัดเลือก', value: 'คัดเลือก'},
+    {label: 'เฉพาะเจาะจง', value: 'เฉพาะเจาะจง'},
+
+  ]
+
+  
+
+  
+
+  
+
+
   return (
     <div className="flex flex-col gap-10 justify-center py-10">
       <div className="flex flex-col justify-center  items-center gap-4">
         <div className="text-2xl font-semibold">Data Request Form:</div>
-        <form className="w-full px-10 md:px-0 md:w-[800px]" onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className="w-full px-10 md:px-0 md:w-[800px]"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <div className="grid grid-cols-2 gap-2">
             <div className="mb-1">
               <label
@@ -181,11 +210,16 @@ const Form = () => {
               >
                 Purchase Method
               </label>
-              <select
-                id="purchaseMethod"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
-                {...register("purchaseMethod", { required: false })}
-              ></select>
+              <Controller
+                name="purchaseMethod"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={purchaseMethod}
+                  />
+                )}
+              />
             </div>
 
             <div className="mb-1">
@@ -237,12 +271,15 @@ const Form = () => {
               >
                 Project Type
               </label>
-              <input
-                type="text"
-                id="projectType"
-                placeholder="projectType"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
-                {...register("projectType", { required: false })}
+              <Controller
+                name="projectType"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={projectType}
+                  />
+                )}
               />
             </div>
           </div>
@@ -304,7 +341,8 @@ const Form = () => {
                 Reference Price From
               </label>
               <input
-                type="text"
+                type="number"
+                min={0}
                 id="referencePriceFrom"
                 placeholder="Price From"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
@@ -320,7 +358,8 @@ const Form = () => {
                 Till
               </label>
               <input
-                type="text"
+                type="number"
+                min={0}
                 id="referencePriceTo"
                 placeholder="Price Till"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
@@ -372,18 +411,78 @@ const Form = () => {
           {/* filters */}
           <div class="flex">
             {/* left side */}
-            <div className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-s-lg  border border-gray-300 focus:ring-blue-500 focus:border-blue-500  dark:text-white"></div>
+            <div className="block w-full text-sm text-gray-900 bg-gray-50 rounded-s-lg  ">
+              <Select
+                options={[
+                  {
+                    value: "Ascending",
+                    label: "Ascending",
+                  },
+                  {
+                    value: "Descending",
+                    label: "Descending",
+                  },
+                ]}
+                className="text-black"
+              />
+            </div>
 
             {/* mid */}
-            <div className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50  border border-gray-300 border-s-0 border-e-0 focus:ring-blue-500 focus:border-blue-500  dark:text-white"></div>
-            
+            <div className="block w-full z-20 text-sm text-gray-900 bg-gray-50  dark:text-white">
+              <Select
+                options={[
+                  {
+                    value: "Ascending",
+                    label: "Ascending",
+                  },
+                  {
+                    value: "Descending",
+                    label: "Descending",
+                  },
+                ]}
+                className="text-black"
+              />
+            </div>
+
+            <div className="block w-full z-20 text-sm text-gray-900 bg-gray-50  dark:text-white">
+              <Select
+                options={[
+                  {
+                    value: "Ascending",
+                    label: "Ascending",
+                  },
+                  {
+                    value: "Descending",
+                    label: "Descending",
+                  },
+                ]}
+                className="text-black"
+              />
+            </div>
+
+            <div className="block w-full z-20 text-sm text-gray-900 bg-gray-50  dark:text-white">
+              <Select
+                options={[
+                  {
+                    value: "Ascending",
+                    label: "Ascending",
+                  },
+                  {
+                    value: "Descending",
+                    label: "Descending",
+                  },
+                ]}
+                className="text-black"
+              />
+            </div>
+
             {/* right */}
             <div class="relative w-full">
               <input
                 type="search"
                 id="search-dropdown"
-                class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-1 border border-gray-300 focus:ring-blue-500 focus:border-blue-500  dark:text-white "
-                placeholder="Search Mockups, Logos, Design Templates..."
+                class="block px-2.5 py-2 w-full z-20 text-sm text-gray-900 bg-white rounded-e-lg border-s-1 border border-gray-300 focus:ring-blue-500 focus:border-blue-500  dark:text-white "
+                placeholder="Search Project name/Department/Winning Comp"
                 required
               />
               <button
