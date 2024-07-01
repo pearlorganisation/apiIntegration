@@ -5,6 +5,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import BarChart from "../components/BarChart";
 import CompanyInfo from "../components/CompanyInfo";
+import Departments from "../components/Departments";
 
 const Report = () => {
   const [data, setData] = useState();
@@ -13,21 +14,6 @@ const Report = () => {
 
   useLayoutEffect(() => {
     setData(state.data);
-    axios
-      .get(
-        `https://dataapi.moc.go.th/juristic?juristic_id=${state.data?.contract[0]?.winner_tin}`
-      )
-      .then((res) => {
-        setWinningData(res.data);
-        console.log(res.data);
-        setWinningDataLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setWinningDataLoading(false);
-      });
-
-    
   }, [state]);
 
   useEffect(() => {
@@ -68,7 +54,7 @@ const Report = () => {
             xmlns:xlink="http://www.w3.org/1999/xlink"
             aria-hidden="true"
             role="img"
-            class="iconify iconify--twemoji"
+            className="iconify iconify--twemoji"
             preserveAspectRatio="xMidYMid meet"
           >
             <path
@@ -86,9 +72,9 @@ const Report = () => {
           <span className="flex justify-center text-3xl">TH</span>
         </span>
       </div>
-      <div className="w-full flex flex-wrap justify-center gap-4">
+      <div className="w-full grid grid-cols-2 justify-center gap-4">
         {/* project data */}
-        <div className="sm:w-[45%] w-full">
+        <div className="sm:col-span-1 col-span-2">
           <div className="text-2xl font-semibold text-center my-5">
             Project Data
           </div>
@@ -174,14 +160,18 @@ const Report = () => {
         </div>
 
         {/* winning company data */}
-        <div className="sm:w-[45%] w-full">
+        <div className="sm:col-span-1 col-span-2">
           
           <CompanyInfo formData={state.formData} winnerTin={state.data?.contract[0]?.winner_tin} />
 
           {/* chart */}
-          <div>
+          <div className="w-full">
             <BarChart data={chartData} />
           </div>
+        </div>
+
+        <div className="col-span-2">
+          <Departments formData={state.formData} departmentName={state.data?.dept_name} />
         </div>
       </div>
     </>

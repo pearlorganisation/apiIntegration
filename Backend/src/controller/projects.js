@@ -1,10 +1,13 @@
 const findProjectsData = async (data) => {
-  const url = `${process.env.API1}?api-key=${process.env.API_KEY}&year=${
-    data.year + 543
-  }&keyword=${data?.keyword}&limit=${data?.limit || 500}&offset=${
-    data?.offset || 0
-  }&winner_tin=${data?.winnerTin || " "}`;
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
+  const url = `${process.env.API1}?api-key=${process.env.API_KEY1}&year=${
+    data.year + 543
+  }&keyword=${data?.keyword || " "}&limit=${data?.limit || 500}&offset=${
+    data?.offset || 0
+  }&winner_tin=${data?.winnerTin || " "}&dept_code=${data?.dept_code || ""}`;
+
+  // console.log(url)
   const options = {
     method: "GET",
   };
@@ -89,30 +92,81 @@ export const getCompanyProjectsData = async (req, res) => {
 
 // get department data
 
-const findDepartmentCode = async () => {
+const findDepartmentCode = async (data) => {
   console.log("finding dept code");
-  const url = `https://opend.data.go.th/govspending/egpdepartment&api-key=${process.env.API_KEY}`;
-
+  const url = `https://opend.data.go.th/govspending/egpdepartment?api-key=${process.env.API_KEY0}&dept_name=${data?.dept_name}`;
+  // console.log(url)
   const options = {
     method: "GET",
   };
+
   const response = await fetch(url, options);
   const res = await response.json();
-  console.log(res);
-  if (res?.result[0]?.dept_code) {
-    return { status: true, deptCode: res?.result[0]?.dept_code }; // Return the JSON data
+  // console.log(res);
+  if (res?.result[res?.result?.length - 1]?.dept_code) {
+    return {
+      status: true,
+      dept_code: res?.result[res?.result?.length - 1]?.dept_code,
+    }; // Return the JSON data
   }
   return { status: false, message: "department code not found" };
 };
 
+const findDepartmentSummary = async (data) => {
+  console.log(data);
+
+  const url = `https://opend.data.go.th/govspending/summary_cgdcontract?api-key=${
+    process.env.API_KEY0
+  }&year=${data?.year + 543}&dept_code=${data?.dept_code}`;
+
+  const options = {
+    method: "GET",
+  };
+
+  const response = await fetch(url, options);
+  const res = await response.json();
+  console.log(res);
+  if (res?.summary) {
+    return { status: true, summary: res?.summary }; // Return the JSON data
+  }
+  return { status: false, message: "department summary not found" };
+};
+
 export const getDepartmentData = async (req, res) => {
   try {
-    const departmentCode = await findDepartmentCode(req.body);
+    const departmentCodeRes = await findDepartmentCode(req.body);
     const data = { ...req.body };
-    data.dept_code = departmentCode;
-    data.limit = 20;
-    const result = await findProjectsData(data);
-    res.status(200).send(result);
+
+    data.dept_code = departmentCodeRes.dept_code;
+    let result = [];
+    const initialYear = Number(data?.year);
+    let year = Number(data?.year);
+    while (result.length < 5) {
+      const res = await findProjectsData(data);
+      result.push(...res?.result);
+      year -= 1;
+      data.year = year;
+    }
+
+    data.year = initialYear;
+    let summaryResult = { total_project: "", total_price: "" };
+    let summaryYear = Number(data.year);
+    let floorYear = summaryYear - 5;
+    console.log(summaryResult.length);
+    while (summaryResult?.total_project?.length <= 0 && year >= floorYear) {
+      const summaryRes = await findDepartmentSummary(data);
+
+      summaryResult = {
+        total_project: summaryRes?.summary?.total_project || "",
+        total_price: summaryRes?.summary?.total_price || "",
+        year: summaryYear
+      };
+
+      summaryYear -= 1;
+      data.year = summaryYear;
+    }
+
+    res.status(200).json({ deptProjects: result, summaryResult });
   } catch (error) {
     console.error(error);
     res

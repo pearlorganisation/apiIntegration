@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 
 const CompanyInfo = ({ formData, winnerTin }) => {
@@ -7,6 +7,19 @@ const CompanyInfo = ({ formData, winnerTin }) => {
   const [winningDataLoading, setWinningDataLoading] = useState(true);
   const [totalProjects, setTotalProjects] = useState(null);
   const [totalPotentialEarning, setTotalPotentialEarning] = useState(null);
+
+  useLayoutEffect(() => {
+    axios
+      .get(`https://dataapi.moc.go.th/juristic?juristic_id=${winnerTin}`)
+      .then((res) => {
+        setWinningData(res.data);
+        setWinningDataLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setWinningDataLoading(false);
+      });
+  }, [winnerTin]);
 
   useEffect(() => {
     formData.winnerTin = winnerTin;
