@@ -46,12 +46,20 @@ const Departments = ({ formData, departmentName }) => {
               </thead>
               <tbody>
                 <tr className="odd:bg-white  even:bg-gray-50  border-b ">
+                  <td className="px-6 py-4 font-bold">Department Name</td>
+                  <td className="px-6 py-4">{deptSummary?.year} </td>
+                </tr>
+                <tr className="odd:bg-white  even:bg-gray-50  border-b ">
+                  <td className="px-6 py-4 font-bold">Year</td>
+                  <td className="px-6 py-4">{deptSummary?.year} </td>
+                </tr>
+                <tr className="odd:bg-white  even:bg-gray-50  border-b ">
                   <td className="px-6 py-4 font-bold">Total Projects</td>
-                  <td className="px-6 py-4">{deptSummary?.total_project}</td>
+                  <td className="px-6 py-4">{deptSummary?.total_project} </td>
                 </tr>
 
                 <tr className="odd:bg-white  even:bg-gray-50  border-b ">
-                  <td className="px-6 py-4 font-bold">Total Potential</td>
+                  <td className="px-6 py-4 font-bold">Total Projects Value</td>
                   <td className="px-6 py-4">
                     {`฿ ${deptSummary?.total_price.toLocaleString("en-US")}`}
                   </td>
@@ -63,68 +71,84 @@ const Departments = ({ formData, departmentName }) => {
       )}
 
       {deptProjects && (
-        <table className="col-span-2 text-sm text-left rtl:text-right text-gray-500  ">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50  ">
-            <tr>
-              <th scope="col" className="px-6 py-3">
-                S.No
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Project
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Department
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Winning Company
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Location
-              </th>
-              <th scope="col" className="px-6 py-3" style={{ width: "200px" }}>
-                Reference Price
-              </th>
-              <th scope="col" className="px-6 py-3" style={{ width: "200px" }}>
-                Winning Bid
-              </th>
-              <th scope="col" className="px-6 py-3" style={{ width: "150px" }}>
-                Status
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {deptProjects &&
-              deptProjects?.map((item, idx) => (
-                <tr
-                  key={`deptProject${idx}`}
-                  className="odd:bg-gray-100  even:bg-white  border-b font-[500] hover:!text-black "
+        <div className="col-span-2 ">
+          <div className="pl-2 pb-2 text-2xl font-semibold">Similar Projects by this department</div>
+
+          <table className="text-sm text-left rtl:text-right text-gray-500  ">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50  ">
+              <tr>
+                <th scope="col" className="px-6 py-3">
+                  S.No
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Project
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Department
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Winning Company
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Location
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3"
+                  style={{ width: "200px" }}
                 >
-                  <th
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap "
+                  Reference Price
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3"
+                  style={{ width: "200px" }}
+                >
+                  Winning Bid
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3"
+                  style={{ width: "150px" }}
+                >
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {deptProjects &&
+                deptProjects?.map((item, idx) => (
+                  <tr
+                    key={`deptProject${idx}`}
+                    className="odd:bg-gray-100  even:bg-white  border-b font-[500] hover:!text-black "
                   >
-                    {idx + 1}
-                  </th>
-                  <td className="px-6 py-4 text-blue-500 hover:text-blue-700 hover:underline transition duration-300">
-                    <Link
-                      to="/report"
-                      state={{ data: item, formData: formData }}
+                    <th
+                      scope="row"
+                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap "
                     >
-                      {item?.project_name}
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4">{item?.dept_name}</td>
-                  <td className="px-6 py-4">{item?.contract[0]?.winner}</td>
-                  <td className="px-6 py-4">{item?.province}</td>
-                  <td className="px-6 py-4">&#3647; {item?.price_build}</td>
-                  <td className="px-6 py-4">
-                    &#3647; {item?.contract[0]?.price_agree}
-                  </td>
-                  <td className="px-6 py-4">{item?.contract[0]?.status}</td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+                      {idx + 1}
+                    </th>
+                    <td className="px-6 py-4 text-blue-500 hover:text-blue-700 hover:underline transition duration-300">
+                      <Link
+                        to="/report"
+                        state={{ data: item, formData: formData }}
+                      >
+                        {item?.project_name}
+                      </Link>
+                    </td>
+                    <td className="px-6 py-4">{item?.dept_name}</td>
+                    <td className="px-6 py-4">{item?.contract[0]?.winner}</td>
+                    <td className="px-6 py-4">{item?.province}</td>
+                    <td className="px-6 py-4">&#3647; {item?.price_build}</td>
+                    <td className="px-6 py-4">
+                      &#3647; {item?.contract[0]?.price_agree}
+                    </td>
+                    <td className="px-6 py-4">{item?.contract[0]?.status}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
