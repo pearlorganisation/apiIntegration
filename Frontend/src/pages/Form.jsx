@@ -90,31 +90,26 @@ const Form = () => {
 
 
   
-//   const purchaseSubMethod = [
-//     {label: 'ซื้อ', value: 'ซื้อ'},
-//     {label: '⁠จ้างก่อสร้าง', value: '⁠จ้างก่อสร้าง'},
-//     {label: 'คัดเลือก', value: 'คัดเลือก'},
-//     {label: 'เฉพาะเจาะจง', value: 'เฉพาะเจาะจง'},
+  const purchaseSubMethod = [
+    {label: 'ซื้อ', value: 'ซื้อ'},
+    {label: '⁠จ้างก่อสร้าง', value: '⁠จ้างก่อสร้าง'},
+    {label: '⁠จ้างทำของ/จ้างเหมาบริการ', value: '⁠จ้างทำของ/จ้างเหมาบริการ'},
+    {label: '⁠เช่า', value: '⁠เช่า'},
+    {label: '⁠จ้างที่ปรึกษา', value: '⁠จ้างที่ปรึกษา'},
+    {label: '⁠จ้างออกแบบ', value: '⁠จ้างออกแบบ'},
+    {label: '⁠จ้างควบคุมงาน', value: '⁠จ้างควบคุมงาน'},
+    {label: '⁠จ้างออกแบบและควบคุมงานก่อสร้าง', value: '⁠จ้างออกแบบและควบคุมงานก่อสร้าง'},
+  ]
 
-//   ]
+  const projectStatus = [
+    {label: 'ระหว่างดำเนินการ ', value: 'ระหว่างดำเนินการ '},
+    {label: 'จัดทำสัญญา/PO แล้ว', value: 'จัดทำสัญญา/PO แล้ว'},
+    {label: 'แล้วเสร็จตามสัญญา', value: 'แล้วเสร็จตามสัญญา'},
+    {label: 'ยกเลิกสัญญา', value: 'ยกเลิกสัญญา'},
+    {label: 'ยกเลิกโครงการ ', value: 'ยกเลิกโครงการ '},
+  ]
 
 
-
-
-
-// //   1. 
-// // 2. 
-// // 3. ⁠จ้างทำของ/จ้างเหมาบริการ
-// // 4. ⁠เช่า
-// // 5. ⁠จ้างที่ปรึกษา
-// // 6. ⁠จ้างออกแบบ
-// // 7. ⁠จ้างควบคุมงาน
-// // 8. ⁠จ้างออกแบบและควบคุมงานก่อสร้าง
-  
-
-  
-
-  
 
 
   return (
@@ -251,11 +246,16 @@ const Form = () => {
               >
                 Purchase Sub-Method
               </label>
-              <select
-                id="purchaseSubmethod"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
-                {...register("purchaseSubmethod", { required: false })}
-              ></select>
+              <Controller
+                name="purchaseSubMethod"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={purchaseSubMethod}
+                  />
+                )}
+              />
             </div>
           </div>
 
@@ -396,11 +396,16 @@ const Form = () => {
             >
               Project Status
             </label>
-            <select
-              id="projectStatus"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
-              {...register("projectStatus", { required: false })}
-            ></select>
+            <Controller
+                name="projectStatus"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={projectStatus}
+                  />
+                )}
+              />
           </div>
 
           <div className="mt-2 flex gap-2 justify-center">
