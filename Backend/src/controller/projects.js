@@ -1,18 +1,29 @@
+import dotenv from 'dotenv'
+dotenv.config();
+
+const apiKeysString = process.env.API_KEYS
+const apiKeys = JSON.parse(apiKeysString)
+
 const findProjectsData = async (data) => {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-  const url = `${process.env.API1}?api-key=${process.env.API_KEY1}&year=${
-    data.year + 543
-  }&keyword=${data?.keyword || " "}&limit=${data?.limit || 500}&offset=${
-    data?.offset || 0
-  }&winner_tin=${data?.winnerTin || " "}&dept_code=${data?.dept_code || ""}`;
+  for(let i = 0; i < apiKeys.length; i++){
+    const url = `${process.env.API1}?api-key=${apiKeys[i]}&year=${
+      data.year + 543
+    }&keyword=${data?.keyword || " "}&limit=${data?.limit || 500}&offset=${
+      data?.offset || 0
+    }&winner_tin=${data?.winnerTin || " "}&dept_code=${data?.dept_code || ""}`;
+  
+    console.log(url)
+    const options = {
+      method: "GET",
+    };
+    const response = await fetch(url, options);
+    const res = await response.json(); // Convert response body to JSON
+    if(res.message !== 'API rate limit exceeded') return res
+  }
 
-  // console.log(url)
-  const options = {
-    method: "GET",
-  };
-  const response = await fetch(url, options);
-  const res = await response.json(); // Convert response body to JSON
+ 
   return res; // Return the JSON data
 };
 
@@ -53,7 +64,7 @@ export const getCompanyData = async (req, res) => {
 
 export const getCompanyProjectsData = async (req, res) => {
   try {
-    console.log("company data request came");
+    // console.log("company data request came");
 
     const companyProjectsData = [];
     let i = Number(req.body.yearsFrom.value);
@@ -93,7 +104,7 @@ export const getCompanyProjectsData = async (req, res) => {
 // get department data
 
 const findDepartmentCode = async (data) => {
-  console.log("finding dept code");
+  // console.log("finding dept code");
   const url = `https://opend.data.go.th/govspending/egpdepartment?api-key=${process.env.API_KEY0}&dept_name=${data?.dept_name}`;
   // console.log(url)
   const options = {
@@ -113,8 +124,6 @@ const findDepartmentCode = async (data) => {
 };
 
 const findDepartmentSummary = async (data) => {
-  console.log(data);
-
   const url = `https://opend.data.go.th/govspending/summary_cgdcontract?api-key=${
     process.env.API_KEY0
   }&year=${data?.year + 543}&dept_code=${data?.dept_code}`;
@@ -125,7 +134,7 @@ const findDepartmentSummary = async (data) => {
 
   const response = await fetch(url, options);
   const res = await response.json();
-  console.log(res);
+  // console.log(res);
   if (res?.summary) {
     return { status: true, summary: res?.summary }; // Return the JSON data
   }
@@ -136,7 +145,7 @@ export const getDepartmentData = async (req, res) => {
   try {
     const departmentCodeRes = await findDepartmentCode(req.body);
     const data = { ...req.body };
-
+    console.log(departmentCodeRes)
     data.dept_code = departmentCodeRes.dept_code;
     let result = [];
     const initialYear = Number(data?.year);
@@ -152,7 +161,7 @@ export const getDepartmentData = async (req, res) => {
     let summaryResult = { total_project: "", total_price: "" };
     let summaryYear = Number(data.year);
     let floorYear = summaryYear - 5;
-    console.log(summaryResult.length);
+    // console.log(summaryResult.length);
     while (summaryResult?.total_project?.length <= 0 && year >= floorYear) {
       const summaryRes = await findDepartmentSummary(data);
 

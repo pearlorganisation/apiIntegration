@@ -57,8 +57,70 @@ const VisualizationForm = () => {
     //   })
   }
 
+
+
+  // X axes
+  // 1. 
+  // 2. 
+  // 3. 
+  // 4. 
+  // 5. 
+  // 6. 
+  // 7. 
+  // 8. 
+  // 9. 
+  
+  // Y1/y2 axis
+  // 1. 
+  // 2. 
+  // 3. 
+  // 4. ⁠lead time (project award date - project announce date)
+  
+  
+  
+  // Functions
+  // sum
+  // ⁠average
+  // ⁠median
+  // ⁠count
+  // ⁠%total
+  
+const xAxesData = [
+  {value: 'Year', label: 'Year'},
+  {value: '⁠month', label: '⁠month'},
+  {value: '⁠department name', label: '⁠department name'},
+  {value: '⁠company name', label: '⁠company name'},
+  {value: '⁠purchase method', label: '⁠purchase method'},
+  {value: '⁠sub purchase method', label: '⁠sub purchase method'},
+  {value: '⁠project status', label: '⁠project status'},
+  {value: '⁠location', label: '⁠location'},
+  {value: '⁠budget range', label: '⁠budget range'},
+  
+]
+  
+  
+const yAxesData = [
+  {value: 'Project budget value', label: 'Project budget value'},
+  {value: '⁠winning bid value', label: '⁠winning bid value'},
+  {value: '⁠project id', label: '⁠project id'},
+  {value: '⁠lead time', label: '⁠lead time'},
+]
+
+const groupByData = [
+  {value: 'sum', label: 'sum'},
+  {value: '⁠average', label: '⁠average'},
+  {value: '⁠median', label: '⁠median'},
+  {value: '⁠count', label: '⁠count'},
+  {value: '⁠%total', label: '⁠%total'},
+
+]
+  
+
   return (
     <div className="w-full flex flex-col items-center justify-center p-4">
+      <div className="text-3xl font-semibold">
+        Visualize Data
+      </div>
       <form
         className="w-full px-10 md:px-0 md:w-[800px]"
         onSubmit={handleSubmit(onSubmit)}
@@ -155,15 +217,16 @@ const VisualizationForm = () => {
             >
               X Axes
             </label>
-            <select
-              id="x_axes"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
-              {...register("x_axes", { required: false })}
-            >
-              <option key={"put_something"} value={"put something "}>
-                {"put something "}
-              </option>
-            </select>
+            <Controller
+                name="xAxes"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={xAxesData}
+                  />
+                )}
+              />
           </div>
         </div>
 
@@ -175,15 +238,16 @@ const VisualizationForm = () => {
             >
               Y Axes1
             </label>
-            <select
-              id="y_axes_1"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
-              {...register("y_axes_1", { required: false })}
-            >
-              <option key={"put_something"} value={"put something "}>
-                {"put something "}
-              </option>
-            </select>
+            <Controller
+                name="yAxes1"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={yAxesData}
+                  />
+                )}
+              />
           </div>
 
           <div className="mb-1">
@@ -193,21 +257,16 @@ const VisualizationForm = () => {
             >
               Group By
             </label>
-            <select
-              id="countries"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
-              {...register("y_axes_1_group_by", { required: false })}
-            >
-              <option key={"Sum"} value={"Sum"} selected>
-                {"Sum"}
-              </option>
-              <option key={"Mean"} value={"Mean"}>
-                {"Mean"}
-              </option>
-              <option key={"Median"} value={"Median"}>
-                {"Median"}
-              </option>
-            </select>
+            <Controller
+                name="groupBy1"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={groupByData}
+                  />
+                )}
+              />
           </div>
         </div>
 
@@ -219,15 +278,16 @@ const VisualizationForm = () => {
             >
               Y Axes2
             </label>
-            <select
-              id="y_axes_2"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
-              {...register("y_axes_2", { required: false })}
-            >
-              <option key={"put_something"} value={"put something "}>
-                {"put something "}
-              </option>
-            </select>
+            <Controller
+                name="yAxes2"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={yAxesData}
+                  />
+                )}
+              />
           </div>
 
           <div className="mb-1">
@@ -237,21 +297,16 @@ const VisualizationForm = () => {
             >
               Group By
             </label>
-            <select
-              id="countries"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
-              {...register("y_axes_1_group_by", { required: false })}
-            >
-              <option key={"Sum"} value={"Sum"} selected>
-                {"Sum"}
-              </option>
-              <option key={"Mean"} value={"Mean"}>
-                {"Mean"}
-              </option>
-              <option key={"Median"} value={"Median"}>
-                {"Median"}
-              </option>
-            </select>
+            <Controller
+                name="groupBy2"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={groupByData}
+                  />
+                )}
+              />
           </div>
         </div>
 
