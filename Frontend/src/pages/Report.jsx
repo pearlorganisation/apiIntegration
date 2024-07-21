@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import BarChart from "../components/BarChart";
 import CompanyInfo from "../components/CompanyInfo";
 import Departments from "../components/Departments";
 
@@ -20,26 +19,7 @@ const Report = () => {
     window.scrollTo({top:0, left:0, behavior: 'smooth'})
   }, [])
 
-  const chartData = {
-    labels: ["Chocolate", "Vanilla", "Strawberry"],
-    datasets: [
-      {
-        label: "Blue",
-        backgroundColor: "blue",
-        data: [3, 7, 4],
-      },
-      {
-        label: "Red",
-        backgroundColor: "red",
-        data: [4, 3, 5],
-      },
-      {
-        label: "Green",
-        backgroundColor: "green",
-        data: [7, 2, 6],
-      },
-    ],
-  };
+  
 
   return (
     <>
@@ -164,10 +144,7 @@ const Report = () => {
           
           <CompanyInfo formData={state.formData} winnerTin={state.data?.contract[0]?.winner_tin} />
 
-          {/* chart */}
-          <div className="w-full">
-            <BarChart data={chartData} />
-          </div>
+          
         </div>
 
         <div className="col-span-2">

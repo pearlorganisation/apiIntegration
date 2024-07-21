@@ -3,6 +3,7 @@ import axios from 'axios';
 import Form from "./pages/Form";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Report from "./pages/Report";
+import VisualizationForm from "./pages/VisualizationForm";
 
 
 function App() {
@@ -10,12 +11,17 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Form />
+      element: <Form />,
+    },
+    {
+      path: "/visualization",
+      element: <VisualizationForm />,
     },
     {
       path: "/report",
       element: <Report /> 
-    }
+    },
+    
   ])
 
 
