@@ -174,7 +174,7 @@ export const getDepartmentData = async (req, res) => {
     ) {
       console.log("dept summary", summaryYear);
       const summaryRes = await findDepartmentSummary(data);
-
+      
       summaryResult = {
         total_project: summaryRes?.summary?.total_project || "",
         total_price: summaryRes?.summary?.total_price || "",

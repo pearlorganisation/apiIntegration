@@ -22,7 +22,7 @@ const CompanyInfo = ({ formData, winnerTin }) => {
         console.error(err);
         setWinningDataLoading(false);
       });
-  }, [winnerTin]);  
+  }, [winnerTin]);
 
   useEffect(() => {
     formData.winnerTin = winnerTin;
@@ -77,7 +77,7 @@ const CompanyInfo = ({ formData, winnerTin }) => {
   };
 
   useEffect(() => {
-    if(!companyProjects) return
+    if (!companyProjects) return;
     let tempArr = [];
     let cleanedArr = [];
     for (let i = 0; i < companyProjects?.length; i++) {
@@ -123,8 +123,7 @@ const CompanyInfo = ({ formData, winnerTin }) => {
       };
     });
 
-    generateChartData(calcArr)
-
+    generateChartData(calcArr);
   }, [companyProjects]);
 
   return (
