@@ -1,29 +1,28 @@
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 dotenv.config();
 
-const apiKeysString = process.env.API_KEYS
-const apiKeys = JSON.parse(apiKeysString)
+const apiKeysString = process.env.API_KEYS;
+const apiKeys = JSON.parse(apiKeysString);
 
 const findProjectsData = async (data) => {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-  for(let i = 0; i < apiKeys.length; i++){
+  for (let i = 0; i < apiKeys.length; i++) {
     const url = `${process.env.API1}?api-key=${apiKeys[i]}&year=${
       data.year + 543
     }&keyword=${data?.keyword || " "}&limit=${data?.limit || 500}&offset=${
       data?.offset || 0
     }&winner_tin=${data?.winnerTin || " "}&dept_code=${data?.dept_code || ""}`;
-  
-    console.log(url)
+
+    // console.log(url)
     const options = {
       method: "GET",
     };
     const response = await fetch(url, options);
     const res = await response.json(); // Convert response body to JSON
-    if(res.message !== 'API rate limit exceeded') return res
+    if (res.message !== "API rate limit exceeded") return res;
   }
 
- 
   return res; // Return the JSON data
 };
 
@@ -41,7 +40,7 @@ export const getData = async (req, res) => {
   try {
     let data = req.body;
     // console.log(data)
-    data.year = Number(data.yearsFrom.value);
+    data.year = Number(data?.yearsFrom?.value);
     const result = await findProjectsData(data);
     res.status(200).send(result);
   } catch (error) {
@@ -104,16 +103,18 @@ export const getCompanyProjectsData = async (req, res) => {
 // get department data
 
 const findDepartmentCode = async (data) => {
-  // console.log("finding dept code");
-  const url = `https://opend.data.go.th/govspending/egpdepartment?api-key=${process.env.API_KEY0}&dept_name=${data?.dept_name}`;
-  // console.log(url)
-  const options = {
-    method: "GET",
-  };
 
-  const response = await fetch(url, options);
-  const res = await response.json();
-  // console.log(res);
+  for (let i = 0; i < apiKeys.length; i++) {
+    const url = `https://opend.data.go.th/govspending/egpdepartment?api-key=${apiKeys[i]}&dept_name=${data?.dept_name}`;
+
+    const options = {
+      method: "GET",
+    };
+    const response = await fetch(url, options);
+    const res = await response.json(); // Convert response body to JSON
+    if (res.message !== "API rate limit exceeded") return res;
+  }
+
   if (res?.result[res?.result?.length - 1]?.dept_code) {
     return {
       status: true,
@@ -124,17 +125,18 @@ const findDepartmentCode = async (data) => {
 };
 
 const findDepartmentSummary = async (data) => {
-  const url = `https://opend.data.go.th/govspending/summary_cgdcontract?api-key=${
-    process.env.API_KEY0
-  }&year=${data?.year + 543}&dept_code=${data?.dept_code}`;
 
-  const options = {
-    method: "GET",
-  };
+  for (let i = 0; i < apiKeys.length; i++) {
+    const url = `https://opend.data.go.th/govspending/summary_cgdcontract?api-key=${apiKeys[i]}&year=${data?.year + 543}&dept_code=${data?.dept_code}`;
 
-  const response = await fetch(url, options);
-  const res = await response.json();
-  // console.log(res);
+    const options = {
+      method: "GET",
+    };
+    const response = await fetch(url, options);
+    const res = await response.json(); // Convert response body to JSON
+    if (res.message !== "API rate limit exceeded") return res;
+  }
+  
   if (res?.summary) {
     return { status: true, summary: res?.summary }; // Return the JSON data
   }
@@ -145,12 +147,16 @@ export const getDepartmentData = async (req, res) => {
   try {
     const departmentCodeRes = await findDepartmentCode(req.body);
     const data = { ...req.body };
-    console.log(departmentCodeRes)
+    console.log(departmentCodeRes);
     data.dept_code = departmentCodeRes.dept_code;
     let result = [];
     const initialYear = Number(data?.year);
+
     let year = Number(data?.year);
-    while (result.length < 5) {
+    let floorYear1 = year - 3;
+
+    while (result.length < 5 && year >= floorYear1) {
+      console.log("dept projects", year);
       const res = await findProjectsData(data);
       result.push(...res?.result);
       year -= 1;
@@ -160,15 +166,19 @@ export const getDepartmentData = async (req, res) => {
     data.year = initialYear;
     let summaryResult = { total_project: "", total_price: "" };
     let summaryYear = Number(data.year);
-    let floorYear = summaryYear - 5;
-    // console.log(summaryResult.length);
-    while (summaryResult?.total_project?.length <= 0 && year >= floorYear) {
+    let floorYear = summaryYear - 3;
+    
+    while (
+      summaryResult?.total_project?.length <= 0 &&
+      summaryYear >= floorYear
+    ) {
+      console.log("dept summary", summaryYear);
       const summaryRes = await findDepartmentSummary(data);
 
       summaryResult = {
         total_project: summaryRes?.summary?.total_project || "",
         total_price: summaryRes?.summary?.total_price || "",
-        year: summaryYear
+        year: summaryYear,
       };
 
       summaryYear -= 1;
@@ -183,3 +193,23 @@ export const getDepartmentData = async (req, res) => {
       .send("There seems to be some technical issue while fetching the data");
   }
 };
+
+
+
+//winner data
+
+export const getWinnerTin = async (data) => {
+  for (let i = 0; i < apiKeys.length; i++) {
+    const url = `https://opend.data.go.th/govspending/egpwinner?api-key=${apiKeys[i]}&winner=${data?.winner}&limit=${data?.limit || 20}`;
+
+    const options = {
+      method: "GET",
+    };
+    const response = await fetch(url, options);
+    const res = await response.json(); // Convert response body to JSON
+    if (res.message !== "API rate limit exceeded") return res;
+  }
+
+  console.log('winner data', res)
+
+}

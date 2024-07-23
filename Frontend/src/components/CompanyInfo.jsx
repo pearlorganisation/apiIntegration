@@ -8,8 +8,8 @@ const CompanyInfo = ({ formData, winnerTin }) => {
   const [winningDataLoading, setWinningDataLoading] = useState(true);
   const [totalProjects, setTotalProjects] = useState(null);
   const [totalPotentialEarning, setTotalPotentialEarning] = useState(null);
-  const [companyProjects, setCompanyProjects] = useState(null)
-  const [datasets, setDataSets] = useState(null)
+  const [companyProjects, setCompanyProjects] = useState(null);
+  const [chartData, setChartData] = useState(null);
 
   useLayoutEffect(() => {
     axios
@@ -22,7 +22,7 @@ const CompanyInfo = ({ formData, winnerTin }) => {
         console.error(err);
         setWinningDataLoading(false);
       });
-  }, [winnerTin]);
+  }, [winnerTin]);  
 
   useEffect(() => {
     formData.winnerTin = winnerTin;
@@ -32,7 +32,8 @@ const CompanyInfo = ({ formData, winnerTin }) => {
         formData
       )
       .then((res) => {
-        setCompanyProjects(res.data.companyProjects)
+        // console.log('company data', res.data)
+        setCompanyProjects(res.data.companyProjectsData);
         setTotalProjects(res.data.totalProjects);
         setTotalPotentialEarning(res.data.totalPotentialEarning);
         // setIsLoading(false);
@@ -43,38 +44,88 @@ const CompanyInfo = ({ formData, winnerTin }) => {
       });
   }, [formData]);
 
-
-  // useEffect(() => {
-  //   let arr = []
-
-  //   for(let i=0; i < companyProjects.length; i++) {
-  //     for(let j=0; j < companyProjects[i].result; j++){
-  //       companyProjects[i].result[j]
-  //     }
-  //   }
-  // }, [companyProjects])
-
-  const chartData = {
-    labels: ["Chocolate", "Vanilla", "Strawberry"],
-    datasets: [
-      {
-        label: "dept 1", // x axis
-        backgroundColor: "blue",
-        data: [3, 7, 4], // y axis
-      },
-      {
-        label: "Red",
-        backgroundColor: "red",
-        data: [4, 3, 5],
-      },
-      {
-        label: "Green",
-        backgroundColor: "green",
-        data: [7, 2, 6],
-      },
-    ],
+  const removeCommaFromNum = (item) => {
+    return item.replace(/\,/g, "");
   };
 
+  const generateChartData = (data) => {
+    let chartStructure = {
+      labels: [],
+      datasets: [
+        {
+          label: "Average Reference Price", // x axis
+          backgroundColor: "red",
+          data: [], // y axis
+        },
+        {
+          label: "Average Winning Price", // x axis
+          backgroundColor: "orange",
+          data: [], // y axis
+        },
+      ],
+    };
+
+    data.forEach((item) => {
+      chartStructure.labels.push(item.dept);
+      // first column
+      chartStructure.datasets[0].data.push(item.averageReferencePrice);
+      // second column
+      chartStructure.datasets[1].data.push(item.averageWinningPrice);
+    });
+
+    setChartData(chartStructure);
+  };
+
+  useEffect(() => {
+    if(!companyProjects) return
+    let tempArr = [];
+    let cleanedArr = [];
+    for (let i = 0; i < companyProjects?.length; i++) {
+      const result = companyProjects[i].result.map((project) => {
+        project.price_build = removeCommaFromNum(project.price_build);
+        project.sum_price_agree = removeCommaFromNum(project.sum_price_agree);
+        return project;
+      });
+      tempArr = [...tempArr, ...result];
+    }
+    let groupedResult = Object.groupBy(tempArr, ({ dept_name }) => dept_name);
+    // console.log(groupedResult)
+    Object.keys(groupedResult).forEach((e) => {
+      let tempObj = {};
+      tempObj = groupedResult[`${e}`];
+      cleanedArr.push(tempObj);
+    });
+
+    console.log(cleanedArr);
+
+    let calcArr = cleanedArr.map((dept) => {
+      const projects = dept;
+      const totalReferencePrice = projects.reduce(
+        (sum, project) => sum + parseFloat(project.price_build),
+        0
+      );
+      const totalWinningPrice = projects.reduce(
+        (sum, project) => sum + parseFloat(project.sum_price_agree),
+        0
+      );
+
+      const projectCount = projects.length;
+
+      // console.log(totalReferencePrice, totalWinningPrice, projectCount)
+
+      const averageReferencePrice = totalReferencePrice / projectCount;
+      const averageWinningPrice = totalWinningPrice / projectCount;
+
+      return {
+        dept: projects[0].dept_name,
+        averageReferencePrice,
+        averageWinningPrice,
+      };
+    });
+
+    generateChartData(calcArr)
+
+  }, [companyProjects]);
 
   return (
     <div className="grid grid-cols-1">
@@ -152,7 +203,7 @@ const CompanyInfo = ({ formData, winnerTin }) => {
       </div>
       {/* chart */}
       <div className="w-full col-span-1">
-        <BarChart data={chartData} />
+        {chartData && <BarChart data={chartData} />}
       </div>
     </div>
   );
