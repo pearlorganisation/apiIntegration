@@ -125,7 +125,7 @@ const Form = () => {
       <div className="flex flex-col justify-center  items-center gap-4">
         <div className="text-2xl font-semibold">Data Request Form:</div>
         <form
-          className="w-full px-10 md:px-0 md:w-[800px]"
+          className="w-full px-10 md:px-0 md:w-[800px] z-[99999]"
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="grid grid-cols-2 gap-2">

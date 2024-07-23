@@ -12,9 +12,14 @@ const findProjectsData = async (data) => {
       data.year + 543
     }&keyword=${data?.keyword || " "}&limit=${data?.limit || 500}&offset=${
       data?.offset || 0
-    }&winner_tin=${data?.winnerTin || " "}&dept_code=${data?.dept_code || ""}`;
+    }&winner_tin=${data?.winnerTin || " "}&dept_code=${
+      data?.dept_code || ""
+    }&budget_start=${data?.referencePriceFrom || 0}&budget_end=${
+      data?.referencePriceTo || ""
+    }`;
 
-    // console.log(url)
+    console.log(url);
+
     const options = {
       method: "GET",
     };
@@ -39,8 +44,18 @@ const findCompanyData = async (data) => {
 export const getData = async (req, res) => {
   try {
     let data = req.body;
-    // console.log(data)
+    // console.log(data);
     data.year = Number(data?.yearsFrom?.value);
+    console.log(data?.winningCompany);
+    if (data?.winningCompany && data?.winningCompany?.length > 0) {
+      const winnerTin = await findWinnerTin(data?.winningCompany, 20);
+      data.winnerTin = winnerTin;
+    }
+
+    data.referencePriceFrom = Number(data?.referencePriceFrom)
+    data.referencePriceTo = Number(data?.referencePriceFrom) > Number(data?.referencePriceTo) ? "" : Number(data?.referencePriceTo)
+
+
     const result = await findProjectsData(data);
     res.status(200).send(result);
   } catch (error) {
@@ -103,7 +118,6 @@ export const getCompanyProjectsData = async (req, res) => {
 // get department data
 
 const findDepartmentCode = async (data) => {
-
   for (let i = 0; i < apiKeys.length; i++) {
     const url = `https://opend.data.go.th/govspending/egpdepartment?api-key=${apiKeys[i]}&dept_name=${data?.dept_name}`;
 
@@ -125,9 +139,10 @@ const findDepartmentCode = async (data) => {
 };
 
 const findDepartmentSummary = async (data) => {
-
   for (let i = 0; i < apiKeys.length; i++) {
-    const url = `https://opend.data.go.th/govspending/summary_cgdcontract?api-key=${apiKeys[i]}&year=${data?.year + 543}&dept_code=${data?.dept_code}`;
+    const url = `https://opend.data.go.th/govspending/summary_cgdcontract?api-key=${
+      apiKeys[i]
+    }&year=${data?.year + 543}&dept_code=${data?.dept_code}`;
 
     const options = {
       method: "GET",
@@ -136,7 +151,7 @@ const findDepartmentSummary = async (data) => {
     const res = await response.json(); // Convert response body to JSON
     if (res.message !== "API rate limit exceeded") return res;
   }
-  
+
   if (res?.summary) {
     return { status: true, summary: res?.summary }; // Return the JSON data
   }
@@ -167,14 +182,14 @@ export const getDepartmentData = async (req, res) => {
     let summaryResult = { total_project: "", total_price: "" };
     let summaryYear = Number(data.year);
     let floorYear = summaryYear - 3;
-    
+
     while (
       summaryResult?.total_project?.length <= 0 &&
       summaryYear >= floorYear
     ) {
       console.log("dept summary", summaryYear);
       const summaryRes = await findDepartmentSummary(data);
-      
+
       summaryResult = {
         total_project: summaryRes?.summary?.total_project || "",
         total_price: summaryRes?.summary?.total_price || "",
@@ -194,22 +209,22 @@ export const getDepartmentData = async (req, res) => {
   }
 };
 
-
-
 //winner data
 
-export const getWinnerTin = async (data) => {
+export const findWinnerTin = async (winner, limit = 20) => {
   for (let i = 0; i < apiKeys.length; i++) {
-    const url = `https://opend.data.go.th/govspending/egpwinner?api-key=${apiKeys[i]}&winner=${data?.winner}&limit=${data?.limit || 20}`;
+    const url = `https://opend.data.go.th/govspending/egpwinner?api-key=${
+      apiKeys[i]
+    }&winner=${winner}&limit=${limit || 20}&offset=0`;
+
+    // console.log(i, url);
 
     const options = {
       method: "GET",
     };
     const response = await fetch(url, options);
     const res = await response.json(); // Convert response body to JSON
-    if (res.message !== "API rate limit exceeded") return res;
+    if (res?.message !== "API rate limit exceeded")
+      return res?.result[0]?.winner_tin;
   }
-
-  console.log('winner data', res)
-
-}
+};
