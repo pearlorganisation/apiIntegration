@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import Select from "react-select";
 import { BeatLoader } from "react-spinner";
 import Skeleton from "react-loading-skeleton";
+import {toast, Toaster} from 'sonner'
 
 const Form = () => {
   const [apiData, setApiData] = useState(
@@ -60,8 +61,26 @@ const Form = () => {
       .then((res) => {
         let resData = { data: res.data.result, formData: data };
         setApiData(resData);
-        
-    resultTableRef.current.scrollTo({top:0, left:0, behavior: 'smooth'})
+        if(resData?.data?.length > 0) {
+          toast.success('Projects Data Found', {
+            style: {
+              background: "green",
+              color: "white",
+            },
+          })
+        } else {
+          toast.error('No Data Found', {
+            style: {
+              background: "red",
+              color: "white",
+            },
+          })
+        }
+        resultTableRef.current.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "smooth",
+        });
 
         localStorage.setItem("apiData", JSON.stringify(resData));
         setIsLoading(false);
@@ -122,10 +141,11 @@ const Form = () => {
 
   return (
     <div className="flex flex-col gap-10 justify-center py-10">
+      <Toaster />
       <div className="flex flex-col justify-center  items-center gap-4">
         <div className="text-2xl font-semibold">Data Request Form:</div>
         <form
-          className="w-full px-10 md:px-0 md:w-[800px]"
+          className="w-full px-10 md:px-0 md:w-[800px] z-[99999]"
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="grid grid-cols-2 gap-2">
@@ -141,7 +161,7 @@ const Form = () => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
                 {...register("country", { required: false })}
               >
-                <option key={"Thailand"} value={"Thailand"} selected>
+                <option key={"Thailand"} defaultValue={"Thailand"}>
                   {"Thailand"}
                 </option>
               </select>
@@ -426,10 +446,11 @@ const Form = () => {
             </button>
           </div>
         </form>
+        
       </div>
       <div ref={resultTableRef}>
         {isLoading && <Skeleton count={10} className="h-[40px]" />}
-        {apiData && (
+        {apiData?.data?.length > 0 && (
           <div className="flex flex-col gap-4">
             <div className="text-2xl text-center font-semibold">Result:</div>
             {/* filters */}
@@ -617,6 +638,7 @@ const Form = () => {
             </div>
           </div>
         )}
+        
       </div>
     </div>
   );
