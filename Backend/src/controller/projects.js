@@ -18,7 +18,7 @@ const findProjectsData = async (data) => {
       data?.referencePriceTo || ""
     }`;
 
-    console.log(url);
+    console.log('find project',url);
 
     const options = {
       method: "GET",
@@ -44,9 +44,7 @@ const findCompanyData = async (data) => {
 export const getData = async (req, res) => {
   try {
     let data = req.body;
-    // console.log(data);
     data.year = Number(data?.yearsFrom?.value);
-
     data.referencePriceFrom = Number(data?.referencePriceFrom);
     data.referencePriceTo =
       Number(data?.referencePriceFrom) > Number(data?.referencePriceTo)
@@ -55,12 +53,12 @@ export const getData = async (req, res) => {
 
     if (data?.winningCompany && data?.winningCompany?.length > 0) {
       const winnerTin = await findWinnerTin(data?.winningCompany, 20);
-      console.log(winnerTin)
       if (!winnerTin) {
         res
           .status(200)
           .json({ status: false, message: "No data found for this winner", data:[] });
       } else {
+        data.winnerTin = winnerTin
         const result = await findProjectsData(data);
         res.status(200).send(result);
       }
@@ -89,7 +87,6 @@ export const getCompanyData = async (req, res) => {
 
 export const getCompanyProjectsData = async (req, res) => {
   try {
-    // console.log("company data request came");
 
     const companyProjectsData = [];
     let i = Number(req.body.yearsFrom.value);
@@ -235,7 +232,7 @@ export const findWinnerTin = async (winner, limit = 20) => {
     };
     const response = await fetch(url, options);
     const res = await response.json(); // Convert response body to JSON
-    console.log(res)
+    // console.log(res)
     if (res?.message !== "API rate limit exceeded")
       return res?.result[0]?.winner_tin;
   }

@@ -453,107 +453,6 @@ const Form = () => {
         {apiData?.data?.length > 0 && (
           <div className="flex flex-col gap-4">
             <div className="text-2xl text-center font-semibold">Result:</div>
-            {/* filters */}
-            <div className="flex">
-              {/* left side */}
-              <div className="block w-full text-sm text-gray-900 bg-gray-50 rounded-s-lg  ">
-                <Select
-                  options={[
-                    {
-                      value: "Ascending",
-                      label: "Ascending",
-                    },
-                    {
-                      value: "Descending",
-                      label: "Descending",
-                    },
-                  ]}
-                  className="text-black"
-                />
-              </div>
-
-              {/* mid */}
-              <div className="block w-full z-20 text-sm text-gray-900 bg-gray-50  dark:text-white">
-                <Select
-                  options={[
-                    {
-                      value: "Ascending",
-                      label: "Ascending",
-                    },
-                    {
-                      value: "Descending",
-                      label: "Descending",
-                    },
-                  ]}
-                  className="text-black"
-                />
-              </div>
-
-              <div className="block w-full z-20 text-sm text-gray-900 bg-gray-50  dark:text-white">
-                <Select
-                  options={[
-                    {
-                      value: "Ascending",
-                      label: "Ascending",
-                    },
-                    {
-                      value: "Descending",
-                      label: "Descending",
-                    },
-                  ]}
-                  className="text-black"
-                />
-              </div>
-
-              <div className="block w-full z-20 text-sm text-gray-900 bg-gray-50  dark:text-white">
-                <Select
-                  options={[
-                    {
-                      value: "Ascending",
-                      label: "Ascending",
-                    },
-                    {
-                      value: "Descending",
-                      label: "Descending",
-                    },
-                  ]}
-                  className="text-black"
-                />
-              </div>
-
-              {/* right */}
-              <div className="relative w-full">
-                <input
-                  type="search"
-                  id="search-dropdown"
-                  className="block px-2.5 py-2 w-full z-20 text-sm text-gray-900 bg-white rounded-e-lg border-s-1 border border-gray-300 focus:ring-blue-500 focus:border-blue-500  dark:text-white "
-                  placeholder="Search Project name/Department/Winning Comp"
-                  required
-                />
-                <button
-                  type="button"
-                  className="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300   "
-                >
-                  <svg
-                    className="w-4 h-4"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                    />
-                  </svg>
-                  <span className="sr-only">Search</span>
-                </button>
-              </div>
-            </div>
-
             <div className="relative overflow-x-auto sm:rounded-lg shadow-[0_0_1px_0px#000] mb-10">
               <table className="w-full text-sm text-left rtl:text-right text-gray-500  ">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50  ">
@@ -619,7 +518,7 @@ const Form = () => {
                         </td>
                         <td className="px-6 py-4">{item?.dept_name}</td>
                         <td className="px-6 py-4">
-                          {item?.contract[0]?.winner}
+                          {item?.contract[0]?.winner} {item?.contract[0]?.winner_tin}
                         </td>
                         <td className="px-6 py-4">{item?.province}</td>
                         <td className="px-6 py-4">
